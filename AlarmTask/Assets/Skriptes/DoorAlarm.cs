@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(AudioSource),typeof(Rigidbody2D))]
+[RequireComponent(typeof(AudioSource), typeof(Rigidbody2D))]
 public class DoorAlarm : MonoBehaviour
 {
     [SerializeField] private float _timeToFullAlarmVolume;
@@ -19,16 +19,7 @@ public class DoorAlarm : MonoBehaviour
     {
         _audioSource = GetComponent<AudioSource>();
         _rigidbody2D = GetComponent<Rigidbody2D>();
-    }
-
-    private void Update()
-    {
-        if (_isThiefInHous)
-        {
-            _currentAlarmDuration += Time.deltaTime;
-            float normalizedAlarmVolume = _currentAlarmDuration / _timeToFullAlarmVolume;
-            _audioSource.volume = normalizedAlarmVolume;
-        }
+        StartCoroutine(RaiseVolume());
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -37,7 +28,9 @@ public class DoorAlarm : MonoBehaviour
 
         if (collisionCount > 0)
         {
-            Alarm();
+            _currentAlarmDuration = 0;
+            _isThiefInHous = true;
+            _audioSource.Play();
         }
         else
         {
@@ -46,13 +39,16 @@ public class DoorAlarm : MonoBehaviour
         }
     }
 
-    private void Alarm()
+    private IEnumerator RaiseVolume()
     {
-        _isThiefInHous = true;
-        if (!_audioSource.isPlaying)
+        while(_currentAlarmDuration < _timeToFullAlarmVolume)
         {
-            _currentAlarmDuration = 0;
-            _audioSource.Play();
+            if (_isThiefInHous)
+            {
+                _audioSource.volume = _currentAlarmDuration / _timeToFullAlarmVolume;
+                _currentAlarmDuration += Time.deltaTime;
+            }
+            yield return null;
         }
     }
 }

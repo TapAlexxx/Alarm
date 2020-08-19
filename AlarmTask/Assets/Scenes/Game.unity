@@ -2217,7 +2217,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e17f95144679a9f40ae69d3905fded30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _timeToFullAlarmVolume: 10
+  _timeToFullAlarmVolume: 15
   _filter:
     useTriggers: 0
     useLayerMask: 1
